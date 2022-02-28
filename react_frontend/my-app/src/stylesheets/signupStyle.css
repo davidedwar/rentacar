@@ -1,0 +1,15 @@
+#signupCard {
+  width: 60vw;
+  margin-left: 19vw;
+  margin-top: 6vw;
+}
+#signupSubmitButton {
+  margin-left: 15vw;
+  margin-top: 2.5vw;
+  margin-bottom: 2vw;
+  width: 27.2vw;
+  background: #212529;
+}
+#snackbarError {
+  margin-left: 36vw;
+}
