@@ -1,0 +1,6 @@
+need to remove password from the redux state
+need to return the username on signin
+need to return the id on signin
+need to add the token to the redux state
+responsiveness once all the pages are done
+improve the look somehow

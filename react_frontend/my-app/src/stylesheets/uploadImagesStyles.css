@@ -1,0 +1,13 @@
+.row {
+  margin-top: 4w !important;
+}
+#uploadCarCard {
+  height: 40vw;
+}
+#uploadSubmitButton {
+  margin-left: 6.5vw;
+  margin-top: 3.5vw;
+  margin-bottom: 2vw;
+  width: 35.2vw;
+  background: #212529;
+}

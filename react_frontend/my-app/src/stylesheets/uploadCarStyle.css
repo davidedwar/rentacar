@@ -1,7 +1,45 @@
+#uploadCarCard {
+  width: 50vw;
+  margin-left: 25vw;
+  margin-top: 5vw;
+  height: 32vw;
+}
 #titleDiv {
   text-align: center;
   margin-right: 1.9vw;
   margin-top: 3vw;
   font-weight: bold;
   font-size: 3vw;
+}
+#makeControl {
+  margin-top: 0.5vw;
+  margin-left: 3vw;
+}
+#modelControl {
+  margin-top: 0.5vw;
+  /* margin-left: 3vw; */
+}
+#yearControl {
+  margin-left: 3vw;
+  margin-top: 2vw;
+}
+#colorControl {
+  /* margin-left: 3vw; */
+  margin-top: 2vw;
+}
+#rentControl {
+  margin-left: 3vw;
+  margin-top: 3vw;
+}
+#descriptionControl {
+  /* margin-left: 3vw; */
+  margin-top: 3vw;
+  width: 20vw;
+}
+#uploadSubmitButton {
+  margin-left: 10vw;
+  margin-top: 3.5vw;
+  margin-bottom: 2vw;
+  width: 27.2vw;
+  background: #212529;
 }

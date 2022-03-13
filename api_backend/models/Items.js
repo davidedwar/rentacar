@@ -23,9 +23,11 @@ const ItemSchema = new mongoose.Schema({
         type: Boolean,
         default:false
     },
-    photo: {
-        type: Buffer,
-        contentType: String
+    images: [{
+        type: String
+    }],
+    color: {
+        type: String
     },
     description: {
         type: String,
@@ -35,7 +37,7 @@ const ItemSchema = new mongoose.Schema({
     created: {
         type: Date,
         default: Date.now()
-    },
+    }, 
 
 })
 

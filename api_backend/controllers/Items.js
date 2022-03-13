@@ -1,6 +1,86 @@
 const Item = require('../models/Items');
 const User = require('../models/Users');
+const path = require('path');
+const multer = require('multer');
+const { v4: uuidv4 } = require('uuid')
 
+
+
+// var storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, './uploads')
+//   },
+//   filename: function (req, file, cb) {
+//     console.log(file);
+//     cb(null, Date.now() + path.extname(file.originalname))
+//   }
+// })
+// var upload = multer({ storage: storage })
+
+const fileFilter = (req, file, cb) =>{
+  cb(null, true)
+}
+
+// let upload = multer({
+//   storage: storage, 
+//   fileFilter: fileFilter
+// })
+// const uploadImages = (upload.array("images",12),(req,res)=>{
+//   var response = '<a href="/">Home</a><br>'
+//     response += "Files uploaded successfully.<br>"
+//     for(var i=0;i<req.files.length;i++){
+//         response += `<img src="${req.files[i].path}" /><br>`
+//     }
+    
+//     return res.send(response);
+// });
+  
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+      cb(null, path.join(__dirname, './images/'))
+  },
+  filename: function (req, file, cb) {
+          cb(null, file.fieldname + '-' + Date.now() + file.originalname.match(/\..*$/)[0])
+  }
+});
+
+const multiUpload = multer({
+  storage,
+  limits: { fileSize: 1 * 1024 * 1024 }, // 1MB
+  fileFilter: (req, file, cb) => {
+      if (file.mimetype == "image/png" || file.mimetype == "image/jpg" || file.mimetype == "image/jpeg") {
+          cb(null, true);
+      } else {
+          cb(null, false);
+          const err = new Error('Only .png, .jpg and .jpeg format allowed!')
+          err.name = 'ExtensionError'
+          return cb(err);
+      }
+  },
+}).array('uploadedImages', 2)
+
+const uploader = (req, res) => {
+  multiUpload(req, res, function (err) {
+    if (err instanceof multer.MulterError) {
+        // A Multer error occurred when uploading.
+        res.status(500).send({ error: { message: `Multer uploading error: ${err.message}` } }).end();
+        return;
+    } else if (err) {
+        // An unknown error occurred when uploading.
+        if (err.name == 'ExtensionError') {
+            res.status(413).send({ error: { message: err.message } }).end();
+        } else {
+            res.status(500).send({ error: { message: `unknown uploading error: ${err.message}` } }).end();
+        }
+        return;
+    }
+
+    // Everything went fine.
+    // show file `req.files`
+    // show body `req.body`
+    res.status(200).end('Your files uploaded.');
+})
+}
 
 /// visitor function
 const getItems = (req,res)=>{
@@ -11,59 +91,7 @@ const getItems = (req,res)=>{
      res.send(items);
   })
 };
-const getModels = (req,res)=>{
-  switch(req.body.Manufacturer){
-    case "Toyota":
-      return res.json({models: ["Avalon", "Avanza", "Camry", "Corolla", "Echo", "FJ Cruiser", "Fortuner", "Hiace", 
-      "Highlander", "Innova", "Land Cruiser", "Prado", "Previa", "RAV 4", "Sequoia", "Sienna", "Tundra", "Tacoma", "Yaris", ""]})
-    case "Honda":
-      return res.json({models: ["Accord", "CR-V", "City", "Civic", "HR-V", "Odyssey", 
-      "Pilot", "Van"]})
-    case "Audi":
-      return res.json({models: ["A1", "A3", "A4", "A5", "A6", "A7", 
-      "A8", "Q2", "Q3", "Q5", "Q7", "Q8","R8","S3/RS3","S4/RS4","S5/RS5","S6/RS6","S7/RS7","S8","TT","e-tron"]})
-    case "BMW":
-      return res.json({models: ["1-series", "1M", "2-Series", "3-Series", "4-Series", "5-Series", 
-      "6-Series", "7-Series", "8-Series", "M-Roadster", "M2", "M3","M4","M5","M6","M8","X1","X2","X3","X4","X5",
-    "X6","X7","Z3","Z4","Z8","i3","i8"]})
-    case "Chevrolet":
-      return res.json({models: ["Astro", "Avalanche", "Aveo", "Camaro", "Caprice", "Captiva", 
-      "Corvette", "Cruze", "Impala", "Malibu", "Silverado", "Spark","Suburban","Taho","Trailblazer","Traverse","Trax"]})
-    case "Ford":
-      return res.json({models: ["Bronco", "Ecosport", "Edge", "Escape", "Expedition", "Explorer", 
-      "F-Series Pickup", "Fiesta", "Figo", "Focus", "Fusion", "Mustang","Pickup","Ranger","Shelby","Taurus","Van"]})
-    case "Hyundai":
-      return res.json({models: ["Accent", "Azera", "Elantra", "Genesis", "H1", "Kona", 
-      "Santa Fe", "Sonata", "Tucson", "Veloster", "Veracruz", "i10","i20","i30","i40"]})
-    case "Kia":
-      return res.json({models: ["Cadenza", "Carens", "Carnival", "Cerato", "k5", "Mohave", 
-      "Oprius", "Optima", "Picanto", "Rio", "Sedona", "Sorento" ,"Soul","Sportage","Stinger"]})
-    case "Land Rover":
-      return res.json({models: ["Defender", "Discovery", "Discovery Sport", "LR2", "LR4", "LR5", 
-      "Range Rover", "Range Rover Evoque", "Range Rover Evoque", "Range Rover Velar"]})
-    case "Lexus":
-      return res.json({models: ["CT-Series", "ES-Series", "GS-Series", "GX-Series", "IS-C", "IS-F", 
-      "IS-Series", "LC 500", "LM 300", "LS-Series", "LX-Series", "LX600", "NX 200t", "NX 300", "RC", "RX-Series"]})
-    case "Mercedes-Benz":
-      return res.json({models: ["240/260/280", "300/350/380", "500/560", "A-Class", "A200", "AMG", 
-      "AMG GT 4 doors", "C-Class", "C-Class Coupe", "C43", "CL-Class", "CLA", "CLK-Class", "CLS-Class", "E-Class", "E-Class Coupe"
-      , "G-Class", "GL-Class", "GLA", "GLC", "GLE Coupe", "GLE SUV", "GLE-Class", "GLK-Class", "GLS", "GLS-Class", "GT", "M-Class", "R-Class", "S-Class"
-    ,"S-Class Coupe", "SL-Class", "SLK-Class", "Sprinter","V-Class"]})
-    case "Mitsubishi":
-      return res.json({models: ["ASX", "Attrage", "Canter", "Eclipse", "EclipseCross", "Galant", 
-      "L200", "Lancer", "Mirage", "Montero", "Montero Sport", "Outlander", "Pajero", "Pajero Sport", "Xpander"]})
-    case "Nissan":
-      return res.json({models: ["Altima", "Armada", "GT-R", "Juke", "Kicks", "Maxima", 
-      "Micra", "Murano", "Navara", "Pathfinder", "Patrol", "Pickup", "Qashqai", "Rogue", "Sentra", "Sunny"
-      , "Tiida", "Van", "X-Trail", "Xterra"]})
-    case "Renault":
-      return res.json({models: ["Captur", "Dokker", "Duster", "Fluence", "Koleos", "Logan", 
-      "Megane", "Safrane", "Symbol", "Talisman", "Twizy"]})
-    case "Volkswagen":
-      return res.json({models: ["Beetle", "CC", "Caddy", "GTI", "Golf", "Golf R", 
-      "Jetta", "Passat", "Polo", "Scirocco", "Tiguan", "Touareg", "Transporter"]})
-  }
-};
+  
 
 /// renter function
 const viewMyPostings = (req, res) => {
@@ -99,6 +127,7 @@ const viewMyPostings = (req, res) => {
 
 // renter function
 const addItems = (req, res) => {  
+    // const { images } = req.body;
     const userId = req.body.userId;
     User.findOne({
       _id: req.body.userId
@@ -195,4 +224,5 @@ const updateItemDetails = (req, res) => {
     })
 }
 
-module.exports = {getItems, addItems, deleteItems, updateItemDetails, viewMyPostings};
+module.exports = {getItems, addItems, deleteItems, updateItemDetails, viewMyPostings, uploader};
+// module.exports = upload.single('categoryImage');
